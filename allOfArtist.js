@@ -1,4 +1,10 @@
+//@ts-check
 
+// NAME: All Of Artist
+// AUTHOR: P4lmeiras
+// DESCRIPTION: Create a playlist with all songs of an artist
+
+/// <reference path="../../spicetify-cli/globals.d.ts" />
 (function allOfArtist(){ 
     const{
         CosmosAsync,
