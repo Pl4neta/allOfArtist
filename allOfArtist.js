@@ -11,7 +11,7 @@
         URI
     } = Spicetify;
     if (!(CosmosAsync && URI)){
-        setTimeout(allOfArtist, 300)
+        setTimeout(allOfArtist, 10)
         return
     }
 
@@ -24,7 +24,7 @@
     function makePlaylist(uris){
         const rawUri = uris[0]
         const uri = rawUri.split(":")[2]
-        const artistName = await CosmosAsync.get(`https://api.spotify.com/v1/artists/${uri}`)
+        //const artistName = await CosmosAsync.get(`https://api.spotify.com/v1/artists/${uri}`)
         Spicetify.PopupModal.display({
             title: "Content",
             content: "Teste",
