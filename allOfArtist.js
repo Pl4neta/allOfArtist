@@ -27,7 +27,7 @@
         //const artistName = await CosmosAsync.get(`https://api.spotify.com/v1/artists/${uri}`)
         Spicetify.PopupModal.display({
             title: "Content",
-            content: "Teste",
+            content: "Teste2",
         });
     }
     
