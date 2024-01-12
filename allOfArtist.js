@@ -85,6 +85,45 @@
 		}
     }
  
+	async function makeSimplePlaylist(uris){
+		const rawUri = uris[0]
+        const uri = rawUri.split(":")[2]
+        const artist = await getArtist(uri)
+		if(artist.id != 'ERROR'){
+			var artistAlbumsRaw = await CosmosAsync.get('https://api.spotify.com/v1/artists/'+artist.id+'/albums?limit=50&offset=0')
+			const total = artistAlbumsRaw.total
+			var artistAlbums = []
+			var end = false;
+			do{
+				for(let i = 0; i < artistAlbumsRaw.items.length; i++){
+					if(artistAlbumsRaw.items[i] == '' || artistAlbumsRaw.items[i] == null){
+						end = true
+						break
+					}
+					let tempDate = artistAlbumsRaw.items[i].release_date.replace(/-/g, '')
+					while(tempDate.length < 8){
+						tempDate += '0'
+					}
+					artistAlbums.push([tempDate, artistAlbumsRaw.items[i].id]);
+				}
+				if(end || artistAlbumsRaw.items.length == 0)
+					break
+				artistAlbumsRaw = await CosmosAsync.get(artistAlbumsRaw.next)	
+			}while(artistAlbums.length < total)
+			artistAlbums.sort()
+			Spicetify.PopupModal.display({
+				title: "Content",
+				content: artistAlbums.length+':'+total
+			})
+		}
+		else{
+			Spicetify.PopupModal.display({
+				title: 'Content',
+				content: 'ERROR',
+			})
+		}
+	}
+
     function shouldDisplayContextMenu(uris){
         if (uris.length > 1){
             return false;
@@ -99,8 +138,9 @@
 
     const cntxMenu = new Spicetify.ContextMenu.Item(
         buttontxt,
-        makePlaylist,
-        shouldDisplayContextMenu,
+        //makePlaylist,
+        makeSimplePlaylist,
+		shouldDisplayContextMenu,
     );
 
     cntxMenu.register();
