@@ -37,8 +37,8 @@ spicetify apply
 ## Usage
 Right click an artist, track or album and click "Create All Of".
 
-<img src='https://raw.githubusercontent.com/P4lmeiras/allOfArtist/main/allOfArtistMenu.png' height=250>
-<img src='https://raw.githubusercontent.com/P4lmeiras/allOfArtist/main/allOfArtistModal.png' height=250>
+<img src='https://raw.githubusercontent.com/P4lmeiras/allOfArtist/main/allOfArtistMenu.png' height=250> | <img src='https://raw.githubusercontent.com/P4lmeiras/allOfArtist/main/allOfArtistModal.png' height=250>
+![Screenshot Menu](allOfArtistMenu.png) | ![Screenshot Playlist](allOfArtistModal.png)
 
 ## More
 
