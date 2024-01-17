@@ -25,14 +25,21 @@
 	    	artistData.name = artist.name;
 		}
 		catch{
-	    	try{
-				let artist = await CosmosAsync.get('https://api.spotify.com/v1/tracks/'+id);
+			try{
+				let artist = await CosmosAsync.get('https://api.spotify.com/v1/albums/'+id);
 				artistData.id = artist.artists[0].id;
 				artistData.name = artist.artists[0].name;
-	    	}
-	    	catch{
-				artistData.id = artistData.name = 'ERROR';
-	    	}
+			}
+			catch{
+	    		try{
+					let artist = await CosmosAsync.get('https://api.spotify.com/v1/tracks/'+id);
+					artistData.id = artist.artists[0].id;
+					artistData.name = artist.artists[0].name;
+	    		}
+	    		catch{
+					artistData.id = artistData.name = 'ERROR';
+	    		}
+			}
 		}
 		return artistData;
     }
@@ -125,7 +132,7 @@
         }
         const uri = uris[0]
         const uriObj = Spicetify.URI.fromString(uri);
-        if (uriObj.type === Spicetify.URI.Type.TRACK || uriObj.type === Spicetify.URI.Type.ARTIST){
+        if (uriObj.type === Spicetify.URI.Type.TRACK || uriObj.type === Spicetify.URI.Type.ARTIST || uriObj.type === Spicetify.URI.Type.ALBUM){
 			return true;
         }
         return false;
