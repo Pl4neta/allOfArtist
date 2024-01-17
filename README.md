@@ -3,7 +3,7 @@
 
 ## Install
 ### Through [marketplace](https://github.com/spicetify/spicetify-marketplace)
-Search for 'All Of Artist' in Extensions and install it.
+In Extensions, search for 'All Of Artist' and install it.
 
 ### Manually
 Copy `allOfArtist.js` into your [Spicetify](https://github.com/khanhas/spicetify-cli) extensions directory:
@@ -37,7 +37,7 @@ spicetify apply
 ## Usage
 Right click an artist, track or album and click "Create All Of".
 
-[![Screenshot Menu](screenshot.png)](https://raw.githubusercontent.com/P4lmeiras/allOfArtist/main/allOfArtistMenu.png)
+![Screenshot Menu](screenshot.png)
 ![Screenshot Playlist](allOfArtistModal.png)
 
 ## More
