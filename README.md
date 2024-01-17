@@ -37,7 +37,7 @@ spicetify apply
 ## Usage
 Right click an artist, track or album and click "Create All Of".
 
-![Screenshot Menu](screenshot.png)
+![Screenshot Menu](allOfArtistMenu.png)
 ![Screenshot Playlist](allOfArtistModal.png)
 
 ## More
