@@ -1,12 +1,10 @@
-[
-  {
-    "name": "All Of Artist",
-    "description": "Spicetify extension to create a playlist with all songs of an artist",
-    "preview": "allOfArtist.png",
-    "main": "allOfArtist.js",
-    "readme": "README.md",
-    "authors": [
-        { "name": "P4lmeiras", "url": "https://github.com/P4lmeiras" }
-    ]
-  }
-]
+{
+  "name": "All Of Artist",
+  "description": "Spicetify extension to create a playlist with all songs of an artist",
+  "preview": "allOfArtist.png",
+  "main": "allOfArtist.js",
+  "readme": "README.md",
+  "authors": [
+      { "name": "P4lmeiras", "url": "https://github.com/P4lmeiras" }
+  ]
+}
