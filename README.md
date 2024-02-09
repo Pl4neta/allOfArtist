@@ -46,5 +46,5 @@ Right click an artist, track or album and click "Create All Of".
 
 If you find any bugs, please [create a new issue](https://github.com/P4lmeiras/allOfArtistissues/new) on the GitHub repo.
 
-[![Github Stars Badge](https://img.shields.io/github/stars/P4lmeiras/allOfArtist?logo=github&style=flat&color=yellow)](https://github.com/P4lmeiras/allOfArtist/)
+[![Github Stars Badge](https://img.shields.io/github/stars/P4lmeiras/allOfArtist?logo=github&style=flat&color=yellow)](https://github.com/P4lmeiras/allOfArtist/stargazers)
 [![Github Issues Badge](https://img.shields.io/github/issues/P4lmeiras/allOfArtist?logo=github&style=flat&color=green)](https://github.com/P4lmeiras/allOfArtist/issues)
