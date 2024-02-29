@@ -130,7 +130,7 @@
         if (uris.length > 1){
             return false;
         }
-        const uri = uris[0]
+        const uri = uris[0];
         const uriObj = Spicetify.URI.fromString(uri);
         if (uriObj.type === Spicetify.URI.Type.TRACK || uriObj.type === Spicetify.URI.Type.ARTIST || uriObj.type === Spicetify.URI.Type.ALBUM){
 			return true;
