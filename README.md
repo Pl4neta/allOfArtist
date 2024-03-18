@@ -44,7 +44,11 @@ Right click an artist, track or album and click "Create All Of".
 
 ## More
 
-If you find any bugs, please [create a new issue](https://github.com/P4lmeiras/allOfArtistissues/new) on the GitHub repo.
+If you find any bugs, please [create a new issue](https://github.com/P4lmeiras/allOfArtist/issues/new) on the GitHub repo.
+To better assess the issue please provide:
+  - The spicetify's version,
+  - All extensions installed besides allOfArtist,
+  - And if the issue is related to some specific artists, provide those aswell.
 
 [![Github Stars Badge](https://img.shields.io/github/stars/P4lmeiras/allOfArtist?logo=github&style=flat&color=yellow)](https://github.com/P4lmeiras/allOfArtist/stargazers)
 [![Github Issues Badge](https://img.shields.io/github/issues/P4lmeiras/allOfArtist?logo=github&style=flat&color=green)](https://github.com/P4lmeiras/allOfArtist/issues)
