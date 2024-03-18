@@ -17,36 +17,38 @@
 
 	const buttontxt = 'Create All Of'
 
-    async function getArtist(id){
-		var artistData = {}
-		try{
-	    	let artist = await CosmosAsync.get('https://api.spotify.com/v1/artists/'+id);
+    async function getArtist(uris){
+		const uri = uris[0].split(':');
+		const type = uri[1];
+		const id = uri[2];
+		var artistData = {};
+		if(type == 'artist'){
+			let artist = await CosmosAsync.get('https://api.spotify.com/v1/artists/'+id);
 	    	artistData.id = artist.id;
 	    	artistData.name = artist.name;
 		}
-		catch{
-			try{
+		else{
+			if(type == 'album'){
 				let artist = await CosmosAsync.get('https://api.spotify.com/v1/albums/'+id);
 				artistData.id = artist.artists[0].id;
 				artistData.name = artist.artists[0].name;
 			}
-			catch{
-	    		try{
+			else{
+				if(type == 'track'){
 					let artist = await CosmosAsync.get('https://api.spotify.com/v1/tracks/'+id);
 					artistData.id = artist.artists[0].id;
 					artistData.name = artist.artists[0].name;
-	    		}
-	    		catch{
+				}
+				else{
 					artistData.id = artistData.name = 'ERROR';
-	    		}
+				}
 			}
 		}
 		return artistData;
     }
  
 	async function makePlaylist_getTracks(uris){
-        const uri = uris[0].split(":")[2];
-        artistData = await getArtist(uri);
+        artistData = await getArtist(uris);
 		const user = await CosmosAsync.get('https://api.spotify.com/v1/me');
 		if(artistData.id != 'ERROR'){
 			var artistAlbumsRaw = await CosmosAsync.get('https://api.spotify.com/v1/artists/'+artistData.id+'/albums?include_groups=album,single,appears_on&limit=50&offset=0');
