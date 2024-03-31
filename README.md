@@ -1,4 +1,4 @@
-# allOfArtist
+# All Of Artist
 [Spicetify](https://github.com/khanhas/spicetify-cli) extension to create a playlist with all songs of an artist
 
 ## Install
@@ -16,7 +16,7 @@ Copy `allOfArtist.js` into your [Spicetify](https://github.com/khanhas/spicetify
 After putting the extension file into the correct folder, run the following command to install the extension:
 
 ```sh
-spicetify config extensions FeatureShuffle.js
+spicetify config extensions allOfArtist.js
 spicetify apply
 ```
 
@@ -35,11 +35,13 @@ spicetify apply
 ```
 
 ## Usage
-Right click an artist, track or album and click "Create All Of".
+Right click an artist, track or album and in "Create All Of [Artist Name]" there will be 2 options:
+  - With Featured On - Will create a playlist with all songs that the artist is featured on (given that spotify acknowledges it as such);
+  - Only Originals - Will create a playlist with only the songs shown in the artist's profile.
 
 <div float='left'>
-<img src='https://raw.githubusercontent.com/P4lmeiras/allOfArtist/main/allOfArtistMenu.png' height=250>
-<img src='https://raw.githubusercontent.com/P4lmeiras/allOfArtist/main/allOfArtistModal.png' height=250>
+<img src='https://raw.githubusercontent.com/P4lmeiras/allOfArtist/main/allOfArtistMenu.png' width=400><br>
+<img src='https://raw.githubusercontent.com/P4lmeiras/allOfArtist/main/allOfArtistNotification.png' width=400>
 </div>
 
 ## More
