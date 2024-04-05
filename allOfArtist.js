@@ -62,16 +62,13 @@
 			var artistAlbumsRaw = await CosmosAsync.get('https://api.spotify.com/v1/artists/'+artistData.id+'/albums?include_groups=album,single,appears_on&limit=50&offset=0');
 			const total = artistAlbumsRaw.total;
 			var artistAlbums = [];
-			var end = false;
 			do{
 				for(let i = 0; i < artistAlbumsRaw.items.length; i++){
-					if(artistAlbumsRaw.items[i].album_type != 'compilation'){
-						let tempDate = artistAlbumsRaw.items[i].release_date.replace(/-/g, '');
-						while(tempDate.length < 8){
-							tempDate += '0';
-						}
-						artistAlbums.push([tempDate, artistAlbumsRaw.items[i].id]);
+					let tempDate = artistAlbumsRaw.items[i].release_date.replace(/-/g, '');
+					while(tempDate.length < 8){
+						tempDate += '0';
 					}
+					artistAlbums.push([tempDate, artistAlbumsRaw.items[i].id]);
 				}
 				if(artistAlbumsRaw.next != null)
 					artistAlbumsRaw = await CosmosAsync.get(artistAlbumsRaw.next);
@@ -95,29 +92,38 @@
 		}
 	}
 	
-	async function addFromAlbums(playlistId,artistData,array,type){
+	async function getIndexFrom2dArray(array,key){
 		for(let i = 0; i < array.length; i++){
-			var episodes = [];
-			var removeTracks = [];
-			var allTracks = [];
-			var tracks = [];
+			let index = array[i].indexOf(key);
+			if(index > -1)
+				return i;
+		}
+		return false;
+	}
+
+	async function addFromAlbums(playlistId,artistData,array,type){
+		var removeTracks = [];
+		var tracks = [];
+		for(let i = 0; i < array.length; i++){
+			var tracksAdd = [];
 			var albumTracks = await CosmosAsync.get('https://api.spotify.com/v1/albums/'+array[i][1]+'/tracks?offset=0&limit=50');
 			while(true){
 				for(let r = 0; r < albumTracks.items.length; r++){
 					for(let c = 0; c < albumTracks.items[r].artists.length; c++){
 						if(albumTracks.items[r].artists[c].id == artistData.id && !(type == 'originals' && c > 0)){
-							if(allTracks.indexOf(albumTracks.items[r].name) > -1){
-								var lastMatchIndex = 0;
-								while(allTracks.indexOf(albumTracks.items[r].name, c) > -1){
-									lastMatchIndex = allTracks.indexOf(albumTracks.items[r].name, c);
-									if(lastMatchIndex == -1)
-										removeTracks.push(albumTracks.items[r].id);
+							let index = await getIndexFrom2dArray(tracks,albumTracks.items[r].name);
+							if(index){
+								if(albumTracks.total > tracks[index][2]){
+									tracks.push([albumTracks.items[r].name, albumTracks.items[r].uri, albumTracks.total]);
+									tracksAdd.push(albumTracks.items[r].uri);
+									removeTracks.push({uri:tracks[index][1]});
+									tracks.splice(index,1);
 								}
 							}
-							allTracks.push([albumTracks.items[r].name, albumTracks.items[r].id]);
-							tracks.push('spotify:'+albumTracks.items[r].type+':'+albumTracks.items[r].id);
-							if(albumTracks.items[r].type == 'episode')
-								episodes.push(albumTracks.items[r].id);
+							else{
+								tracks.push([albumTracks.items[r].name, albumTracks.items[r].uri, albumTracks.total]);
+								tracksAdd.push(albumTracks.items[r].uri);
+							}
 						}
 					}
 				}
@@ -127,8 +133,16 @@
 					break;
 			}
 			await CosmosAsync.post('https://api.spotify.com/v1/playlists/'+playlistId+'/tracks', {
-				uris: tracks
+				uris: tracksAdd
 			});
+		}
+		if(removeTracks){
+			for(let i = 0; i < removeTracks.length; i += 100){
+				let slice = removeTracks.slice(i, i + 100);
+				await CosmosAsync.del('https://api.spotify.com/v1/playlists/'+playlistId+'/tracks', {
+						tracks: slice
+				});
+			}
 		}
 	}
 
