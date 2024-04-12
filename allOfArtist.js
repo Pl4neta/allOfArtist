@@ -15,7 +15,14 @@
         return;
     }
 
-	const buttontxt = 'Create All Of'
+
+	async function settings(){
+		Spicetify.PopupModal.display({
+			title: 'All Of Artist Settings',
+			content: '',
+			isLarge: true,
+		});
+	}
 
     async function getArtist(uris){
 		const uri = uris[0].split(':');
@@ -54,6 +61,10 @@
 	function playlistOriginals(uris){
 		makePlaylist_getTracks(uris, 'originals');
 	}
+	
+	function playlistCompilations(uris){
+		makePlaylist_getTracks(uris, 'compilations');
+	}
 
 	async function makePlaylist_getTracks(uris,type){
         artistData = await getArtist(uris);
@@ -64,11 +75,13 @@
 			var artistAlbums = [];
 			do{
 				for(let i = 0; i < artistAlbumsRaw.items.length; i++){
-					let tempDate = artistAlbumsRaw.items[i].release_date.replace(/-/g, '');
-					while(tempDate.length < 8){
-						tempDate += '0';
+					if(!(type != 'compilations' && artistAlbumsRaw.items[i].album_type == 'compilation')){
+						let tempDate = artistAlbumsRaw.items[i].release_date.replace(/-/g, '');
+						while(tempDate.length < 8){
+							tempDate += '0';
+						}
+						artistAlbums.push([tempDate, artistAlbumsRaw.items[i].id]);
 					}
-					artistAlbums.push([tempDate, artistAlbumsRaw.items[i].id]);
 				}
 				if(artistAlbumsRaw.next != null)
 					artistAlbumsRaw = await CosmosAsync.get(artistAlbumsRaw.next);
@@ -159,7 +172,14 @@
         }
         return false;
     }
-	
+
+	const menu = new Spicetify.Menu.Item(
+		'All of Artist Settings',
+		false,
+		settings,
+		'artist',
+	);
+
     const cntxWith = new Spicetify.ContextMenu.Item(
         'With Featured On',
 		playlistComplete,
@@ -173,14 +193,23 @@
 		shouldDisplayContextMenu,
 		'playlist',
     );
+	
+	const cntxCompilations = new Spicetify.ContextMenu.Item(
+		'Include Compilations',
+		playlistCompilations,
+		shouldDisplayContextMenu,
+		'playlist',
+	);
 
     const cntxMenu = new Spicetify.ContextMenu.SubMenu(
         'Create All Of',
 		[
 			cntxWith,
 			cntxWithout,
+			cntxCompilations,
 		],
 		shouldDisplayContextMenu,
     );
+	menu.register();
 	cntxMenu.register();
 })();
