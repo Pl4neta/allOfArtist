@@ -80,7 +80,7 @@
 						while(tempDate.length < 8){
 							tempDate += '0';
 						}
-						artistAlbums.push([tempDate, artistAlbumsRaw.items[i].id]);
+						artistAlbums.push([tempDate, artistAlbumsRaw.items[i].id, artistAlbumsRaw.items[i].album_type]);
 					}
 				}
 				if(artistAlbumsRaw.next != null)
@@ -125,16 +125,16 @@
 					for(let c = 0; c < albumTracks.items[r].artists.length; c++){
 						if(albumTracks.items[r].artists[c].id == artistData.id && !(type == 'originals' && c > 0)){
 							let index = await getIndexFrom2dArray(tracks,albumTracks.items[r].name);
-							if(index){
-								if(albumTracks.total > tracks[index][2]){
-									tracks.push([albumTracks.items[r].name, albumTracks.items[r].uri, albumTracks.total]);
+							if(index && array[i][2] != "compilation"){
+								if(tracks[index][3] == "compilation" || albumTracks.total > tracks[index][2]){
+                                    tracks.push([albumTracks.items[r].name, albumTracks.items[r].uri, albumTracks.total, array[i][2]]);
 									tracksAdd.push(albumTracks.items[r].uri);
 									removeTracks.push({uri:tracks[index][1]});
 									tracks.splice(index,1);
 								}
 							}
-							else{
-								tracks.push([albumTracks.items[r].name, albumTracks.items[r].uri, albumTracks.total]);
+							else if(!index){
+								tracks.push([albumTracks.items[r].name, albumTracks.items[r].uri, albumTracks.total, array[i][2]]);
 								tracksAdd.push(albumTracks.items[r].uri);
 							}
 						}
