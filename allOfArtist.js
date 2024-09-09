@@ -66,6 +66,10 @@
 		makePlaylist_getTracks(uris, 'compilations');
 	}
 
+    function playlistRawFull(uris){
+        makePlaylist_getTracks(uris, 'raw');
+    }
+
 	async function makePlaylist_getTracks(uris,type){
         artistData = await getArtist(uris);
 		const user = await CosmosAsync.get('https://api.spotify.com/v1/me');
@@ -75,7 +79,7 @@
 			var artistAlbums = [];
 			do{
 				for(let i = 0; i < artistAlbumsRaw.items.length; i++){
-					if(!(type != 'compilations' && artistAlbumsRaw.items[i].album_type == 'compilation')){
+					if(!((type != 'compilations' || type != 'raw') && artistAlbumsRaw.items[i].album_type == 'compilation')){
 						let tempDate = artistAlbumsRaw.items[i].release_date.replace(/-/g, '');
 						while(tempDate.length < 8){
 							tempDate += '0';
@@ -149,7 +153,7 @@
 				uris: tracksAdd
 			});
 		}
-		if(removeTracks){
+		if(removeTracks && type != 'raw'){
 			for(let i = 0; i < removeTracks.length; i += 100){
 				let slice = removeTracks.slice(i, i + 100);
 				await CosmosAsync.del('https://api.spotify.com/v1/playlists/'+playlistId+'/tracks', {
@@ -201,12 +205,20 @@
 		'playlist',
 	);
 
+    const cntxRawFull = new Spicetify.ContextMenu.Item(
+		'Include Compilations (with dupes)',
+		playlistRawFull,
+		shouldDisplayContextMenu,
+		'playlist',
+    );
+
     const cntxMenu = new Spicetify.ContextMenu.SubMenu(
         'Create All Of',
 		[
 			cntxWith,
 			cntxWithout,
 			cntxCompilations,
+            cntxRawFull,
 		],
 		shouldDisplayContextMenu,
     );
