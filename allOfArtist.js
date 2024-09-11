@@ -5,24 +5,214 @@
 // DESCRIPTION: Create a playlist with all songs of an artist
 
 /// <reference path="../../spicetify-cli/globals.d.ts" />
-(function allOfArtist(){ 
-    const{
-        CosmosAsync,
-        URI
-    } = Spicetify;
-    if (!(CosmosAsync && URI)){
-        setTimeout(allOfArtist, 10);
+(async function allOfArtist(){
+
+    if (!(Spicetify.CosmosAsync && Spicetify.Platform)){
+        setTimeout(allOfArtist, 300);
         return;
     }
 
+    const { CosmosAsync, URI, React } = Spicetify;
+    const { useState } = React;
+    
+    function getConfig(){
+        try{
+            const parsed = JSON.parse(Spicetify.LocalStorage.get("allOfArtistConfig") || "{}");
+            if (parsed && typeof parsed === "object"){
+                return parsed;
+            }
+            throw "";
+        }
+        catch{
+            Spicetify.LocalStorage.set("allOfArtistConfig", "{}");
+            return {};
+        }
+    }
 
-	async function settings(){
-		Spicetify.PopupModal.display({
-			title: 'All Of Artist Settings',
-			content: '',
-			isLarge: true,
-		});
-	}
+    const CONFIG = getConfig();
+	saveConfig();
+
+
+    function saveConfig(){
+        Spicetify.LocalStorage.set("allOfArtistConfig", JSON.stringify(CONFIG));
+    }
+
+	function settings(){
+        const style = React.createElement(
+			"style",
+			null,
+			`.popup-row::after {
+				content: "";
+				display: table;
+				clear: both;
+			}
+			.popup-row .col {
+				display: flex;
+				padding: 10px 0;
+				align-items: center;
+			}
+			.popup-row .col.description {
+				float: left;
+				padding-right: 15px;
+			}
+			.popup-row .col.action {
+				float: right;
+				text-align: right;
+			}
+			.popup-row .div-title {
+				color: var(--spice-text);
+			}
+			.popup-row .divider {
+				height: 2px;
+				border-width: 0;
+				background-color: var(--spice-button-disabled);
+			}
+			button.checkbox {
+				align-items: center;
+				border: 0px;
+				border-radius: 50%;
+				background-color: rgba(var(--spice-rgb-shadow), 0.7);
+				color: var(--spice-text);
+				cursor: pointer;
+				display: flex;
+				margin-inline-start: 12px;
+				padding: 8px;
+			}
+			button.checkbox.disabled {
+				color: rgba(var(--spice-rgb-text), 0.3);
+			}
+			select {
+				color: var(--spice-text);
+				background: rgba(var(--spice-rgb-shadow), 0.7);
+				border: 0;
+				height: 32px;
+			}
+			::-webkit-scrollbar {
+				width: 8px;
+			}`
+		);
+
+        function DisplayIcon({ icon, size }) {
+		    return React.createElement("svg", {
+    			width: size,
+    			height: size,
+    			viewBox: "0 0 16 16",
+    			fill: "currentColor",
+    			dangerouslySetInnerHTML: {
+    				__html: icon,
+    			},
+    		});
+    	}
+
+        function checkBoxItem({ name, field, defaultValue, onclickFun = () => {} }) {
+    		let [value, setValue] = useState(CONFIG[field]);
+            value = value? true : defaultValue;
+    		return React.createElement(
+    			"div",
+    			{ className: "popup-row" },
+    			React.createElement("label", { className: "col description" }, name),
+    			React.createElement(
+    				"div",
+    				{ className: "col action" },
+    				React.createElement(
+    					"button",
+    					{
+    						className: `checkbox${value ? "" : " disabled"}`,
+    						onClick: () => {
+                                
+    							CONFIG[field] = !value;
+    							setValue(!value);
+    							saveConfig();
+    							onclickFun();
+    						},
+    					},
+    					React.createElement(DisplayIcon, { icon: Spicetify.SVGIcons.check, size: 16 })
+    				)
+    			)
+    		);
+    	}
+
+        function dropDownItem({ name, field, options, onclickFun = () => {} }) {
+			const [value, setValue] = useState(CONFIG[field]);
+			return React.createElement(
+				"div",
+				{ className: "popup-row" },
+				React.createElement("label", { className: "col description" }, name),
+				React.createElement(
+					"div",
+					{ className: "col action" },
+					React.createElement(
+						"select",
+						{
+							value,
+							onChange: (e) => {
+								setValue(e.target.value);
+								CONFIG[field] = e.target.value;
+								saveConfig();
+								onclickFun();
+							},
+						},
+						Object.keys(options).map((item) =>
+							React.createElement(
+								"option",
+								{
+									value: item,
+								},
+								options[item]
+							)
+						)
+					)
+				)
+			);
+		}
+
+        let settingsDOMContent = React.createElement(
+            "div",
+            null,
+            style,
+            React.createElement("div", { className: "popup-row" }, React.createElement("h3", { className: "div-title" }, "Inclusion")),
+    		React.createElement("div", { className: "popup-row" }, React.createElement("hr", { className: "divider" }, null)),
+            React.createElement(checkBoxItem, {
+			    name: "Include Features",
+			    field: "addArtistFeatures",
+                defaultValue: true,
+    		}),
+            React.createElement(checkBoxItem, {
+			    name: "Include Compilations",
+			    field: "addArtistCompilations",
+                defaultValue: true,
+		    }),
+            React.createElement("div", { className: "popup-row" }, React.createElement("h3", { className: "div-title" }, "Dupes")),
+		    React.createElement("div", { className: "popup-row" }, React.createElement("hr", { className: "divider" }, null)),
+            React.createElement(checkBoxItem, {
+			    name: "Automatically Remove Dupes",
+			    field: "removeArtistDupes",
+                defaultValue: true,
+		    }),
+            React.createElement(checkBoxItem, {
+			    name: "Confirm Choices (Coming Soon!)",
+			    field: "removeArtistDupesConfirm",
+                defaultValue: false,
+		    }),
+            React.createElement("div", { className: "popup-row" }, React.createElement("h3", { className: "div-title" }, "Sorting")),
+		    React.createElement("div", { className: "popup-row" }, React.createElement("hr", { className: "divider" }, null)),
+            React.createElement(dropDownItem, {
+			    name: "Sort Priority",
+			    field: "sortPriority",
+			    options: {
+				    trackCount: "Track Count",
+				    older: "Older Releases",
+				    newer: "Newer Releases",
+	            },
+            })        
+        );
+
+	    Spicetify.PopupModal.display({
+		    title: 'All Of Artist Settings (Work In Progress!)',
+		    content: settingsDOMContent,
+		    isLarge: true,
+	    });
+    }
 
     async function getArtist(uris){
 		const uri = uris[0].split(':');
