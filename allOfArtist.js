@@ -12,207 +12,136 @@
         return;
     }
 
-    const { CosmosAsync, URI, React } = Spicetify;
-    const { useState } = React;
-    
-    function getConfig(){
-        try{
-            const parsed = JSON.parse(Spicetify.LocalStorage.get("allOfArtistConfig") || "{}");
-            if (parsed && typeof parsed === "object"){
-                return parsed;
-            }
-            throw "";
-        }
-        catch{
-            Spicetify.LocalStorage.set("allOfArtistConfig", "{}");
-            return {};
-        }
-    }
+    const { CosmosAsync, URI } = Spicetify;
 
-    const CONFIG = getConfig();
-	saveConfig();
-
-
-    function saveConfig(){
-        Spicetify.LocalStorage.set("allOfArtistConfig", JSON.stringify(CONFIG));
-    }
-
-	function settings(){
-        const style = React.createElement(
-			"style",
-			null,
-			`.popup-row::after {
-				content: "";
-				display: table;
-				clear: both;
-			}
-			.popup-row .col {
-				display: flex;
-				padding: 10px 0;
-				align-items: center;
-			}
-			.popup-row .col.description {
-				float: left;
-				padding-right: 15px;
-			}
-			.popup-row .col.action {
-				float: right;
-				text-align: right;
-			}
-			.popup-row .div-title {
-				color: var(--spice-text);
-			}
-			.popup-row .divider {
-				height: 2px;
-				border-width: 0;
-				background-color: var(--spice-button-disabled);
-			}
-			button.checkbox {
-				align-items: center;
-				border: 0px;
-				border-radius: 50%;
-				background-color: rgba(var(--spice-rgb-shadow), 0.7);
-				color: var(--spice-text);
-				cursor: pointer;
-				display: flex;
-				margin-inline-start: 12px;
-				padding: 8px;
-			}
-			button.checkbox.disabled {
-				color: rgba(var(--spice-rgb-text), 0.3);
-			}
-			select {
-				color: var(--spice-text);
-				background: rgba(var(--spice-rgb-shadow), 0.7);
-				border: 0;
-				height: 32px;
-			}
-			::-webkit-scrollbar {
-				width: 8px;
-			}`
-		);
-
-        function DisplayIcon({ icon, size }) {
-		    return React.createElement("svg", {
-    			width: size,
-    			height: size,
-    			viewBox: "0 0 16 16",
-    			fill: "currentColor",
-    			dangerouslySetInnerHTML: {
-    				__html: icon,
-    			},
-    		});
-    	}
-
-        function checkBoxItem({ name, field, defaultValue, onclickFun = () => {} }) {
-    		let [value, setValue] = useState(CONFIG[field]);
-            value = value? true : defaultValue;
-    		return React.createElement(
-    			"div",
-    			{ className: "popup-row" },
-    			React.createElement("label", { className: "col description" }, name),
-    			React.createElement(
-    				"div",
-    				{ className: "col action" },
-    				React.createElement(
-    					"button",
-    					{
-    						className: `checkbox${value ? "" : " disabled"}`,
-    						onClick: () => {
-                                
-    							CONFIG[field] = !value;
-    							setValue(!value);
-    							saveConfig();
-    							onclickFun();
-    						},
-    					},
-    					React.createElement(DisplayIcon, { icon: Spicetify.SVGIcons.check, size: 16 })
-    				)
-    			)
-    		);
-    	}
-
-        function dropDownItem({ name, field, options, onclickFun = () => {} }) {
-			const [value, setValue] = useState(CONFIG[field]);
-			return React.createElement(
-				"div",
-				{ className: "popup-row" },
-				React.createElement("label", { className: "col description" }, name),
-				React.createElement(
-					"div",
-					{ className: "col action" },
-					React.createElement(
-						"select",
-						{
-							value,
-							onChange: (e) => {
-								setValue(e.target.value);
-								CONFIG[field] = e.target.value;
-								saveConfig();
-								onclickFun();
-							},
-						},
-						Object.keys(options).map((item) =>
-							React.createElement(
-								"option",
-								{
-									value: item,
-								},
-								options[item]
-							)
-						)
-					)
-				)
-			);
+    function localValue(item, defaultValue) {
+		try {
+			const value = JSON.parse(Spicetify.LocalStorage.get(item));
+			return value ?? defaultValue;
+		} catch {
+			return defaultValue;
 		}
+	}
 
-        let settingsDOMContent = React.createElement(
-            "div",
-            null,
-            style,
-            React.createElement("div", { className: "popup-row" }, React.createElement("h3", { className: "div-title" }, "Inclusion")),
-    		React.createElement("div", { className: "popup-row" }, React.createElement("hr", { className: "divider" }, null)),
-            React.createElement(checkBoxItem, {
-			    name: "Include Features",
-			    field: "addArtistFeatures",
-                defaultValue: true,
-    		}),
-            React.createElement(checkBoxItem, {
-			    name: "Include Compilations",
-			    field: "addArtistCompilations",
-                defaultValue: true,
-		    }),
-            React.createElement("div", { className: "popup-row" }, React.createElement("h3", { className: "div-title" }, "Dupes")),
-		    React.createElement("div", { className: "popup-row" }, React.createElement("hr", { className: "divider" }, null)),
-            React.createElement(checkBoxItem, {
-			    name: "Automatically Remove Dupes",
-			    field: "removeArtistDupes",
-                defaultValue: true,
-		    }),
-            React.createElement(checkBoxItem, {
-			    name: "Confirm Choices (Coming Soon!)",
-			    field: "removeArtistDupesConfirm",
-                defaultValue: false,
-		    }),
-            React.createElement("div", { className: "popup-row" }, React.createElement("h3", { className: "div-title" }, "Sorting")),
-		    React.createElement("div", { className: "popup-row" }, React.createElement("hr", { className: "divider" }, null)),
-            React.createElement(dropDownItem, {
-			    name: "Sort Priority",
-			    field: "sortPriority",
-			    options: {
-				    trackCount: "Track Count",
-				    older: "Older Releases",
-				    newer: "Newer Releases",
-	            },
-            })        
-        );
+function styleSettings() {
+		const style = document.createElement("style");
+		style.innerHTML = `
+		.setting-row::after {
+		  content: "";
+		  display: table;
+		  clear: both;
+		}
+		.setting-row {
+		  display: flex;
+		  padding: 10px 0;
+		  align-items: center;
+		  justify-content: space-between;
+		}
+		.setting-row .col.description {
+		  float: left;
+		  padding-right: 15px;
+		  width: 100%;
+		}
+		.setting-row .col.action {
+		  float: right;
+		  text-align: right;
+		}
+		button.switch {
+		  align-items: center;
+		  border: 0px;
+		  border-radius: 50%;
+		  background-color: rgba(var(--spice-rgb-shadow), .7);
+		  color: var(--spice-text);
+		  cursor: pointer;
+		  display: flex;
+		  margin-inline-start: 12px;
+		  padding: 8px;
+		}
+		button.switch.disabled,
+		button.switch[disabled] {
+		  color: rgba(var(--spice-rgb-text), .3);
+		}
+        select {
+		color: var(--spice-text);
+		background: rgba(var(--spice-rgb-shadow), 0.7);
+		border: 0;
+		height: 32px;
+		}
+		`;
+		content.appendChild(style);
+	}
 
-	    Spicetify.PopupModal.display({
-		    title: 'All Of Artist Settings (Work In Progress!)',
-		    content: settingsDOMContent,
-		    isLarge: true,
-	    });
+
+    function header(title) {
+        const container = document.createElement("h2");
+        container.innerText = title;
+        return container;
     }
+
+    function checkButton(name, desc, defaultVal) {
+		    const container = document.createElement("div");
+		    container.classList.add("setting-row");
+		    container.innerHTML = `
+			    <label class="col description">${desc}</label>
+			    <div class="col action">
+                    <button class="switch">
+			            <svg height="16" width="16" viewBox="0 0 16 16" fill="currentColor">${Spicetify.SVGIcons.check}</svg>
+			        </button>
+                </div>
+            `;
+            const button = container.querySelector("button.switch");
+		    button.classList.toggle("disabled", !defaultVal);
+		    button.onclick = () => {
+			    const state = button.classList.contains("disabled");
+			    button.classList.toggle("disabled");
+			    Spicetify.LocalStorage.set(name, state);
+		    };
+		    return container;
+    }
+
+
+    function dropDown(name, desc, options, defaultVal) {
+		    const container = document.createElement("div");
+		    container.classList.add("setting-row");
+            let optionsHTML = '';
+            for (const [key, value] of Object.entries(options)) {
+                optionsHTML += "<option value='"+key+"'>"+value+"</option>";
+            }
+		    container.innerHTML = `
+			    <label class="col description">${desc}</label>
+			    <div class="col action">
+                    <select>
+                        ${optionsHTML}
+			        </select>
+                </div>
+            `;
+		    
+            const select = container.querySelector("select");
+		    select.selectedIndex = defaultVal;
+		    select.onchange = (e) => {
+			    Spicetify.LocalStorage.set(name, select.selectedIndex);
+		    };
+		    return container;
+    }
+
+
+        function settingsContent() {
+		content.appendChild(header("Inclusion"));
+		content.appendChild(checkButton("addArtistFeatures", "Include Features", localValue("addArtistFeatures", true)));
+		content.appendChild(checkButton("addArtistCompilations", "Include Compilations", localValue("addArtistCompilations", true)));
+
+		content.appendChild(header("Dupes"));
+		content.appendChild(checkButton("removeArtistDupes", "Automatically Remove Dupes", localValue("removeArtistDupes", true)));
+		content.appendChild(checkButton("removeArtistDupesConfirm", "Confirm Choices (coming soon!)", localValue("removeArtistDupesConfirm", false)));
+		
+        content.appendChild(header("Sorting"));
+        content.appendChild(dropDown("sortPriority", "Sort Priority", {trackCount: "Track Count", older: "Older Releases", newer: "Newer Releases"}, localValue("sortPriority", 0)));
+	}
+
+    const content = document.createElement("div");
+	styleSettings();
+	settingsContent();
+
 
     async function getArtist(uris){
 		const uri = uris[0].split(':');
@@ -367,12 +296,18 @@
         return false;
     }
 
-	const menu = new Spicetify.Menu.Item(
-		'All of Artist Settings',
+    new Spicetify.Menu.Item(
+		"All Of Artist",
 		false,
-		settings,
-		'artist',
-	);
+		() => {
+			Spicetify.PopupModal.display({
+				title: "All Of Artist Settings",
+				content,
+                isLarge: true,
+			});
+		},
+		'artist'
+	).register();
 
     const cntxWith = new Spicetify.ContextMenu.Item(
         'With Featured On',
@@ -412,6 +347,5 @@
 		],
 		shouldDisplayContextMenu,
     );
-	menu.register();
 	cntxMenu.register();
 })();
