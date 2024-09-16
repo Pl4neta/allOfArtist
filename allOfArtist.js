@@ -136,7 +136,8 @@ function styleSettings() {
             const select = container.querySelector("select");
 		    select.selectedIndex = val;
 		    select.onchange = (e) => {
-                CONFIG[name] = select.selectedIndex;
+                const keys = Object.keys(options)
+                CONFIG[name] = keys[select.selectedIndex];
                 saveConfig();
 		    };
 		    return container;
@@ -147,14 +148,14 @@ function styleSettings() {
 		content.appendChild(header("Inclusion"));
 		content.appendChild(checkButton("addFeatures", "Include Features", ""));
 		content.appendChild(checkButton("addCompilations", "Include Compilations", ""));
-        content.appendChild(dropDown("trackPriority", "Track Priority (COMING SOON!)", {trackCount: "Album's Track Count", oldest: "Oldest Releases", newest: "Newest Releases"}, "disabled"));
 
 		content.appendChild(header("Dupes"));
 		content.appendChild(checkButton("removeDupes", "Automatically Remove Dupes", ""));
-		content.appendChild(checkButton("removeDupesConfirm", "Confirm Choices (COMING SOON!)", "disabled"));
+		content.appendChild(checkButton("removeDupesConfirm", "Confirm Choices (Coming Soon!)", "disabled"));
+            content.appendChild(dropDown("trackPriority", "Track Priority (Experimental!)", {trackCount: "Album's Track Count", oldest: "Oldest Releases"/*, newest: "Newest Releases"*/}, ""));
 		
         content.appendChild(header("Sorting"));
-        content.appendChild(dropDown("sortOrder", "Sort Order (COMING SOON!)", {oldest: "Oldest to Newest", newest: "Newest to Oldest", type: "Albums -> EPs -> Singles"}, "disabled"));
+        content.appendChild(dropDown("sortOrder", "Sort Order (Coming Soon!)", {oldest: "Oldest to Newest", newest: "Newest to Oldest", type: "Albums -> EPs -> Singles"}, "disabled"));
 	}
 
     const content = document.createElement("div");
@@ -193,7 +194,7 @@ function styleSettings() {
     }
 
 	function createAllOf(uris){
-		makePlaylist_getTracks(uris);
+        makePlaylist_getTracks(uris);
 	}
 
 	async function makePlaylist_getTracks(uris){
@@ -235,8 +236,7 @@ function styleSettings() {
 	
 	async function getIndexFrom2dArray(array,key){
 		for(let i = 0; i < array.length; i++){
-			let index = array[i].indexOf(key);
-			if(index > -1)
+			if(array[i].name == key)
 				return i;
 		}
 		return false;
@@ -253,11 +253,11 @@ function styleSettings() {
 					for(let c = 0; c < albumTracks.items[r].artists.length; c++){
 						if(albumTracks.items[r].artists[c].id == artistData.id && !(!CONFIG["addFeatures"] && c > 0)){
 							let index = await getIndexFrom2dArray(tracks,albumTracks.items[r].name);
-                            tracks.push([albumTracks.items[r].name, albumTracks.items[r].uri, albumTracks.total, array[i][2]]);
+                            tracks.push({"name": albumTracks.items[r].name, "uri": albumTracks.items[r].uri, "trackCount": albumTracks.total, "type": array[i][2]});
                             tracksAdd.push(albumTracks.items[r].uri);
-                            if(CONFIG["removeDupes"] && index){
-                                if(array[i][2] != "compilation" && (tracks[index][3] == "compilation" || albumTracks.total > tracks[index][2])){
-                                    removeTracks.push({uri:tracks[index][1]});
+                            if(index && CONFIG["removeDupes"]){
+                                if(CONFIG["trackPriority"] == "trackCount" && (array[i][2] != "compilation" && (tracks[index].type == "compilation" || albumTracks.total > tracks[index].trackCount))){
+                                    removeTracks.push({uri:tracks[index].uri});
                                     tracks.splice(index,1);
                                 }
                                 else{
