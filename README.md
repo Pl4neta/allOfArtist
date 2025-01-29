@@ -1,5 +1,5 @@
 # All Of Artist
-[Spicetify](https://github.com/khanhas/spicetify-cli) extension to create a playlist with all songs of an artist
+[Spicetify](https://github.com/khanhas/spicetify-cli) extension to create a playlist with all the tracks of an artist
 
 ## Install
 ### Through [marketplace](https://github.com/spicetify/spicetify-marketplace)
@@ -35,22 +35,32 @@ spicetify apply
 ```
 
 ## Usage
-Right click an artist, track or album and in "Create All Of [Artist Name]" there will be 2 options:
-  - With Featured On - Will create a playlist with all songs that the artist is featured on (given that spotify acknowledges it as such);
-  - Only Originals - Will create a playlist with only the songs shown in the artist's profile.
+Right click an artist, track or album and you'll have an option to "Create All Of [Artist Name]"
 
-<div float='left'>
-<img src='https://raw.githubusercontent.com/P4lmeiras/allOfArtist/main/allOfArtistMenu.png' width=400><br>
-<img src='https://raw.githubusercontent.com/P4lmeiras/allOfArtist/main/allOfArtistNotification.png' width=400>
+In the profile menu you'll se an item "All Of Artist" where you'll be able to tailor the extension to your needs:
+- Inclusion
+    - Include Features - Includes tracks from other artists where they're featured on;
+    - Include Compilations - Includes tracks from compilations;
+- Dupes
+    - Automatically Remove Dupes - Removes track dupes, dupes are defined by the "Track Priority" setting;
+    - Confirm Choices (work in progress) - Displays a list of all the tracks that'll be added and excluded from the playlist (dupes), allowing you to choose between track versions;
+    - Track Priority - Determines which tracks to prioritize when removing dupes;
+- Sorting
+    - Sort Order (work in progress) - Determines the order in which the tracks will be sorted.
+
+<div>
+<img src='docs/menu.png' width=400><br>
+<img src='docs/notification.png' width=400><br>
+<img src='docs/settings.png' width=400>
 </div>
 
 ## More
 
-If you find any bugs, please [create a new issue](https://github.com/P4lmeiras/allOfArtist/issues/new) on the GitHub repo.
+If you find any bugs, please [create a new issue](https://github.com/Pl4neta/allOfArtist/issues/new) on the GitHub repo.
 To better assess the issue please provide:
   - The spicetify's version,
   - All extensions installed besides allOfArtist,
   - And if the issue is related to some specific artists, provide those aswell.
 
-[![Github Stars Badge](https://img.shields.io/github/stars/P4lmeiras/allOfArtist?logo=github&style=flat&color=yellow)](https://github.com/P4lmeiras/allOfArtist/stargazers)
-[![Github Issues Badge](https://img.shields.io/github/issues/P4lmeiras/allOfArtist?logo=github&style=flat&color=green)](https://github.com/P4lmeiras/allOfArtist/issues)
+[![Github Stars Badge](https://img.shields.io/github/stars/Pl4neta/allOfArtist?logo=github&style=flat&color=yellow)](https://github.com/Pl4neta/allOfArtist/stargazers)
+[![Github Issues Badge](https://img.shields.io/github/issues/Pl4neta/allOfArtist?logo=github&style=flat&color=green)](https://github.com/Pl4neta/allOfArtist/issues)
