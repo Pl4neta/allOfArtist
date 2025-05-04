@@ -316,8 +316,6 @@
     const uri = uris[0];
     const uriObj = Spicetify.URI.fromString(uri);
     if (uriObj.type === Spicetify.URI.Type.TRACK || uriObj.type === Spicetify.URI.Type.ARTIST || uriObj.type === Spicetify.URI.Type.ALBUM){
-      let artist = await getArtist(uris);
-      cntxMenu.name = 'Create All Of ' + artist.name;
       return true;
     }
     return false;
@@ -337,7 +335,7 @@
   ).register();
 
   const cntxMenu = new Spicetify.ContextMenu.Item(
-    'Create All Of',
+    'Create All Of Artist',
     createAllOf,
     shouldDisplayContextMenu,
     'artist'
